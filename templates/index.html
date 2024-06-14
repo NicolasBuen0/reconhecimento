@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reconhecimento Facial</title>
+</head>
+<body>
+    <h1>Upload de Imagem para Reconhecimento Facial</h1>
+    <form id="uploadForm" action="/recognize" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" id="fileInput" accept="image/*" onchange="previewImage(event)">
+        <input type="submit" value="Upload Image">
+    </form>
+    <div id="result"></div>
+    <img id="preview" src="" alt="Pré-visualização da Imagem" style="display:none; max-width: 500px; margin-top: 20px;">
+    
+    <script>
+        // Função para pré-visualizar a imagem
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const output = document.getElementById('preview');
+                output.src = reader.result;
+                output.style.display = 'block';
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const response = await fetch('/recognize', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            document.getElementById('result').innerText = JSON.stringify(result);
+        });
+    </script>
+</body>
+</html>
